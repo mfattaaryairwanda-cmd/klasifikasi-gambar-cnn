@@ -100,14 +100,32 @@ Classification report pada data uji:
 
 Dari hasil tersebut, kelas `forest` memiliki F1-score tertinggi, yaitu 0,96, sedangkan kelas `mountain` memiliki F1-score terendah, yaitu 0,77.
 
-### 2. Notebook eksperimen — `Model - MobileNetV2.ipynb`
+### 2. MobileNetV2 — `Model - MobileNetV2.ipynb`
 
-| Metrik | Data latih | Data uji |
+Setelah arsitektur diperbaiki, notebook ini menggunakan MobileNetV2 pralatih dari ImageNet sebagai `base_model`. Bobot MobileNetV2 dibekukan (`base_model.trainable = False`), kemudian ditambahkan lapisan klasifikasi berupa `GlobalAveragePooling2D`, `Dense`, dan `Dropout`. Input gambar dinormalisasi ke rentang `-1` hingga `1`, sesuai kebutuhan MobileNetV2.
+
+| Metrik | Data latih | Data uji* |
 |---|---:|---:|
-| Akurasi | 85,07% | 83,25% |
-| Loss | 0,4198 | 0,4925 |
+| Akurasi | 90,52% | 89,88% |
+| Loss | 0,2698 | 0,2789 |
 
-Notebook kedua mencatat akurasi data uji sebesar **83,25%**. Namun, berdasarkan implementasi yang diperiksa, objek `base_model` MobileNetV2 belum dimasukkan ke dalam model yang dilatih. Dengan demikian, hasil tersebut belum dapat dianggap sebagai hasil MobileNetV2 yang sebenarnya. Perbaiki susunan model terlebih dahulu sebelum menarik kesimpulan tentang transfer learning.
+Model memperoleh akurasi **89,88%** pada 2.985 gambar di `test_ds`.
+
+**Classification report pada data uji:**
+
+| Kelas | Precision | Recall | F1-score | Jumlah data |
+|---|---:|---:|---:|---:|
+| Buildings | 0,85 | 0,98 | 0,91 | 422 |
+| Forest | 0,99 | 0,99 | 0,99 | 474 |
+| Glacier | 0,83 | 0,83 | 0,83 | 553 |
+| Mountain | 0,86 | 0,80 | 0,83 | 525 |
+| Sea | 0,91 | 0,96 | 0,93 | 510 |
+| Street | 0,96 | 0,86 | 0,91 | 501 |
+| **Akurasi keseluruhan** | **0,90** | **0,90** | **0,90** | **2.985** |
+
+Kelas `forest` memperoleh F1-score tertinggi, yaitu **0,99**. Sementara itu, kelas `glacier` dan `mountain` memperoleh F1-score **0,83**.
+
+\* **Catatan evaluasi:** pada notebook saat ini, `test_ds` dipakai sebagai `validation_data` selama pelatihan dan juga untuk evaluasi akhir. Karena itu, hasil pada data uji belum sepenuhnya independen. Untuk evaluasi yang lebih kuat, pisahkan sebagian data latih menjadi validation set dan gunakan `test_ds` hanya sekali untuk evaluasi akhir.
 
 ## Visualisasi
 
@@ -144,12 +162,12 @@ Hasil pelatihan dapat berbeda bergantung pada lingkungan, konfigurasi, dan prose
 
 ## Pengembangan Selanjutnya
 
-- Memperbaiki notebook MobileNetV2 agar model pralatih benar-benar digunakan dalam arsitektur yang dilatih.
-- Memastikan prapemrosesan input sesuai dengan kebutuhan MobileNetV2.
+- Memisahkan data validasi dari data uji agar evaluasi akhir lebih independen.
+- Mempertimbangkan fine-tuning sebagian lapisan MobileNetV2 setelah model dasar dilatih, jika diperlukan.
 - Menggunakan data validasi untuk memantau pelatihan dan menyisihkan data uji untuk evaluasi akhir.
 - Meninjau kelas dengan F1-score lebih rendah, terutama `mountain` dan `glacier`.
 - Menyimpan model hasil pelatihan agar dapat digunakan kembali untuk prediksi gambar baru.
 
 ## Kesimpulan
 
-Model CNN pada `Model.ipynb` memperoleh akurasi data uji sebesar **82,88%** dalam klasifikasi enam kategori gambar pemandangan. Notebook kedua mencatat akurasi **83,25%**, tetapi implementasi MobileNetV2 masih perlu diperbaiki agar hasil eksperimennya benar-benar merepresentasikan penggunaan model tersebut.
+Model CNN pada `Model.ipynb` memperoleh akurasi data uji sebesar **82,88%** dalam klasifikasi enam kategori gambar pemandangan. Notebook MobileNetV2 yang telah diperbaiki memperoleh akurasi data uji tercatat sebesar **89,88%**. Hasil ini perlu ditafsirkan dengan catatan bahwa `test_ds` juga digunakan sebagai data validasi selama pelatihan.
