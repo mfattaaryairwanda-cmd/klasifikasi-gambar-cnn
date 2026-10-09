@@ -1,0 +1,25 @@
+# File dan folder sistem
+
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Python
+
+**pycache**/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Environment
+
+.venv/
+venv/
+env/
+
+# Dataset dan model hasil pelatihan
+
+seg_train/
+seg_test/
+*.keras
+*.h5
+*.weights.h5
